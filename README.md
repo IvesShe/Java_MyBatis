@@ -431,4 +431,68 @@ public class MyTest {
 
 ![image](./images/20210628195111.png)
 
+# 占位符
 
+
+```xml
+<!-- #{studentId}：占位符，表示從java程序中傳入過來的數據 -->
+<select id="selectStudentById" resultType="com.ives.domain.Student">
+        select id,name,email,age from student where id = #{studentId}
+    </select>
+```
+
+# 設置日誌
+
+![image](./images/20210628210727.png)
+
+![image](./images/20210628210755.png)
+
+mybatix.xml
+```xml
+    <!--設置日誌-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+```
+
+# 自動提交
+
+Setting autocommit
+
+當sql語句執行完畢後，提交事務。數據庫更新操作直接保存數據。
+
+# 手動提交
+
+在需要提交事務的位置，執行方法，提交事務或者回願事務。
+
+# 若資源檔無法正確拷貝到target目錄的解決方法
+
+## 方法一
+
+重新build專案、模塊
+
+![image](./images/20210628213023.png)
+
+## 方法二
+
+點擊pom.xml reload專案
+
+![image](./images/20210628213103.png)
+
+## 方法三
+
+maven先clean，再complie
+
+![image](./images/20210628213152.png)
+
+## 方法四
+
+Invalidate and Restart
+
+![image](./images/20210628213227.png)
+
+![image](./images/20210628213247.png)
+
+## 方法五
+
+手動拷貝對應的資源檔...

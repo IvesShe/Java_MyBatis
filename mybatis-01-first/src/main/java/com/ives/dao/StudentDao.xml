@@ -13,9 +13,22 @@
             推薦使用dao接口中的方法名稱
         resultType：告訴mybatis，執行sql語句,把數據賦值給那個類型的java對象。
                      resultType的值現在使用的java對象的全限定名稱。
+
+        #{studentId}：占位符，表示從java程序中傳入過來的數據
     -->
     <select id="selectStudentById" resultType="com.ives.domain.Student">
-        select id,name,email,age from student where id = 1001
+        select id,name,email,age from student where id = #{studentId}
+    </select>
+
+    <!--添加insert
+        insert into student values (1004,"琪琪","chi@gmail.com",26)
+
+        如果傳入給mybatis是一個java對象，使用#{屬性名}獲取此屬性的值。
+        屬性值放到#{}占位符的位置，mybatis執行此屬性對應的getXXXX().
+        例如#{id}，執行getId();
+    -->
+    <select id="insertStudent" resultType="com.ives.domain.Student">
+        insert into student values (#{id},#{name},#{email},#{age})
     </select>
 </mapper>
 
