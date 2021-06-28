@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ives.dao.StudentDao">
+<!--    <select id="selectBlog" resultType="Blog">-->
+<!--        select * from Blog where id = #{id}-->
+<!--    </select>-->
+
+    <!--查詢一個學生的student
+        <select>： 表示查詢操作，裡面是select語句
+        id：要執行的sql語句的唯一標籤，是一個自定義字符串。
+            推薦使用dao接口中的方法名稱
+        resultType：告訴mybatis，執行sql語句,把數據賦值給那個類型的java對象。
+                     resultType的值現在使用的java對象的全限定名稱。
+    -->
+    <select id="selectStudentById" resultType="com.ives.domain.Student">
+        select id,name,email,age from student where id = 1001
+    </select>
+</mapper>
+
+<!--
+    1. 約束文件
+    http://mybatis.org/dtd/mybatis-3-mapper.dtd
+    約束文件作用：定義和限制當前文件中可以使用的標籤和屬性，以及標籤出現的順序。
+
+    2. mapper是根標籤
+    namespace：命名空間，必須有值，不能為空，唯一值。
+               推薦使用Dao接口的全限定名稱。
+    作用： 參與識別sql語句的作用。
+
+    3. 在mapper裡面可以寫<insert>、<update>、<delete>、<select>等標籤
+       <insert>裡面是insert語句，表示執行insert操作
+       <update>裡面是update語句
+       <delete>裡面是delete語句
+       <select>裡面是select語句
+-->

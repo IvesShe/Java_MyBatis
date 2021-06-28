@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!--配置數據源：創建Connection對象-->
+            <dataSource type="POOLED">
+                <!--driver：驅動的內容-->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <!--連接數據庫的url-->
+                <property name="url" value="jdbc:mysql://localhost:3306/springdb?useUnicode=true&amp;characterEncoding"/>
+                <!--用戶名-->
+                <property name="username" value="root"/>
+                <!--密碼-->
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--指定其它mapper文件的位置：
+        其它mapper文件的目的是找到其它文件的sql語句
+    -->
+    <mappers>
+        <!--
+            使用mapper的resource屬性指定mapper文件的路徑。
+            這個路徑是從target/classes路徑開啟的
+
+            使用注意：
+                resource="mapper文件的路徑，使用/分割路徑"
+                一個mapper resource 指定一個mapper文件
+        -->
+        <mapper resource="com/ives/dao/StudentDao.xml"/>
+    </mappers>
+</configuration>
