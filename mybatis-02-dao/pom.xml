@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.ives</groupId>
+  <artifactId>mybatis-02-dao</artifactId>
+  <version>1.0</version>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <!--依賴列表-->
+  <dependencies>
+    <!--mybatis-->
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis</artifactId>
+      <version>3.5.1</version>
+    </dependency>
+
+    <!--mysql驅動-->
+    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.6</version>
+    </dependency>
+
+
+    <!--單元測試-->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!--資源插件-->
+    <resources>
+      <resource>
+        <!--所在的目錄-->
+        <directory>src/main/java</directory>
+        <includes>
+          <!--包括目錄下的.properties.xml文件都會掃描到-->
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+        <!--filtering 選項false不啟用過濾器， *.property已經起到過濾的作用了-->
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>

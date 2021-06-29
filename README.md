@@ -496,3 +496,195 @@ Invalidate and Restart
 ## 方法五
 
 手動拷貝對應的資源檔...
+
+# MyBatis的一些重要對象
+
+- Reources：mybatis框架中的對象，一個作用讀取 主配置信息
+```java
+String config = "mybatis.xml";
+InputStream inputStream = Resources.getResourceAsStream(config);
+```
+
+- SqlSessionFactoryBuilder：負責創建SqlSessionFactory對象
+```java
+SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(inputStream);
+```
+
+- SqlSessionFactory：重要對象
+    + SqlSessionFactory是重量級對象：創建此對象需要使用更多的資源和時間。在項目中有一個就可以了。
+    + SqlSessionFactory接口：作用是SqlSession的工廠，就是創建SqlSession對象。
+    + DefaultSqlSessionFactory實現類
+    ```java
+    public class DefaultSqlSessionFactory implements SqlSessionFactory {}
+    ```
+
+- SqlSessionFactory接口中的方法
+    + openSession()：獲取一個默認的SqlSession對象，默認是需要手工提交事務的。
+    + openSession(boolean autoCommit)：autoCommit表示是否自動提交事務
+
+- SqlSession對象
+    + SqlSession對象是通過SqlSessionFactory獲取的。SqlSession本身是接口
+    + DefaultSqlSession：實現類
+    ```java
+    public class DefaultSqlSession implements SqlSession {}
+    ```
+    + SqlSession作用是提供了大量的執行sql語句的方法
+    ```java
+    selectOne：執行sql語句，最多得到一行紀錄，大餘1行是錯誤。
+    selectList：執行sql語句，返回多行數據。
+    insert：執行insert語句
+    update：執行update語句
+    delete：執行delete語句
+    commit：執行commit語句
+    rollback：執行rollback語句
+    ```
+
+Ctrl + H 可以看接口的實現類   
+
+## 注意SqlSession對象不是線程安全的，使用的步驟
+
+1. 在"方法的內部"，執行sql語句之前，先獲取SqlSession對象
+2. 調用SqlSession的方法，執行sql由語句。
+3. 關閉SqlSession對象，執行SqlSession.close()
+
+## mybatis的底層是JDBC
+
+# 創建mapper文件的模板
+
+新建一個模塊
+
+![image](./images/20210629104230.png)
+
+![image](./images/20210629104338.png)
+
+IDEA內建模板的位置
+
+![image](./images/20210629105105.png)
+
+參考之前的StudentDao.xml寫一個模版
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao接口的全限定名稱">
+
+    <!--使用insert、update、delete、select標籤寫sql語句-->
+
+</mapper>
+```
+
+# 新增模板maybatis-mapper
+
+![image](./images/20210629105716.png)
+
+使用方式
+
+- 可以在要新增檔案的資料夾上按右鍵
+- 或點該資料夾，再打ALT + Insert，再按m(mybatis)，可快速找到該模板
+
+![image](./images/20210629105817.png)
+
+創建成功
+
+![image](./images/20210629110101.png)
+
+# 再新增模板maybatis-config
+
+參考之前的mybatis.xml修改
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--設置日誌-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!--配置數據源：創建Connection對象-->
+            <dataSource type="POOLED">
+                <!--driver：驅動的內容-->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <!--連接數據庫的url-->
+                <property name="url" value="jdbc:mysql://localhost:3306/springdb?useUnicode=true&amp;characterEncoding"/>
+                <!--用戶名-->
+                <property name="username" value="root"/>
+                <!--密碼-->
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--指定其它mapper文件的位置：
+        其它mapper文件的目的是找到其它文件的sql語句
+    -->
+    <mappers>
+        <mapper resource="com/ives/dao/StudentDao.xml"/>
+    </mappers>
+</configuration>
+```
+
+新建模表
+
+![image](./images/20210629111529.png)
+
+使用
+
+![image](./images/20210629111618.png)
+
+創建成功
+
+![image](./images/20210629111707.png)
+
+# 實現類 實現接口方法 快鍵鍵
+Ctrl + O
+
+# MyBatis的Dao代理
+
+## mybatis提供代理： 
+
+mybatis創建Dao接口的實現類對象，完成對sql語句的執行。
+
+mybatis創建一個對象代替原先的dao實現類功能。
+
+## 使用mybatis代理的要求
+
+1. mapper文件中的namespace，必須是dao接口的全限定名稱
+2. mapper文件中標籤的id是dao接口的方法名稱(一模一樣)
+
+## mybatis代理實現方式
+
+使用SqlSession對象的方法 getMapper(dao.class)
+
+例如：現在有StudentDao接口。
+
+```java
+SqlSession session = MyBatisUtil.getSqlSession();
+StudentDao dao = session.getMapper(StudentDao.class);
+Student student = dao.selectById(1005);
+
+
+// 上面代碼中
+StudentDao dao = session.getMapper(StudentDao.class);
+等同於
+StudentDao dao = new StudentDaoImpl();
+```
+
+參考模塊 mybatis-03-proxy-dao
+
+# 理解參數
+
+理解參數是： 通過java程序把數據傳入到mapper文件中的sql語句。
+
+參數主要是指dao接口方法的形參。
+
+## parameterType
+
+parameterType：表示參數的類型，指定dao方法的形參數據類型。這個形參的數據類型是給mybatis使用。
+
+mybatis在給sql語句的實數賦值時使用。 PreparedStatement.setXXX(位置，值)
