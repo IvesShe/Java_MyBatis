@@ -688,3 +688,300 @@ StudentDao dao = new StudentDaoImpl();
 parameterType：表示參數的類型，指定dao方法的形參數據類型。這個形參的數據類型是給mybatis使用。
 
 mybatis在給sql語句的實數賦值時使用。 PreparedStatement.setXXX(位置，值)
+
+## 別名
+
+https://mybatis.org/mybatis-3/zh/configuration.html
+
+![image](./images/20210630094527.png)
+
+## dao接口是一個簡單類型的參數
+        
+```java
+// dao接口的方法形參是一個簡單類型的
+// 簡單型態： java基本數據類型和String
+Student selectByEmail(String email);
+```
+
+```xml
+<!--
+    dao接口是一個簡單類型的參數
+    mapper文件，獲取這個參數值，使用#{任意字符}
+-->
+<select id="selectByEmail" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where email=#{studentEmail}
+</select>
+```
+
+## dao接口有多個簡單類型的參數
+
+@Param： 命名參數，在方法的形參前面使用的，定義參數名，這個名稱可以用在mapper文件中。
+
+dao接口，方法的定義
+
+```java
+/*
+    多個簡單類型的參數
+    使用@Param命名參數，注解是mybatis提供的
+    位置： 在形參定義的前面
+    屬性： value自定義的參數名稱
+    */
+
+List<Student> selectByNameOrAge(@Param("myname") String name,
+                                @Param("myage") Integer age);
+```
+
+mapper文件
+
+```xml
+<!--
+    多個簡單類型的參數
+    當使用了@Param命名後，例如@Param("myname").
+    在mapper中，使用#{命名的參數}，例如 #{myname}
+-->
+<select id="selectByNameOrAge" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where name=#{myname} or age=#{myage}
+</select> 
+```
+
+複雜的寫法
+
+```xml
+<select id="selectByObject" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where
+    name=#{name,javaType=java.lang.String,jdbcType=VARCHAR}
+    or
+    age=#{age,javaType=java.lang.Integer,jdbcType=INTEGER}
+</select>
+```
+
+## dao接口方法使用一個對象作為參數
+
+方法的形參是一個java對象，這個java對象表示多個參數。
+
+使用對象的屬性值作為參數使用。
+
+java對象
+
+```java
+public class Student {
+    private Integer id;
+    private String name;
+    private String email;
+    private Integer age;
+    // set|get方法
+}
+
+public class QueryParam {
+    private Object p1;
+    private Object p2;
+    // set|get方法
+}
+```
+
+
+dao接口中的方法定義
+
+```java
+/*
+    一個java對象作為參數(對象由屬性，每個屬性有set、get方法)
+*/
+List<Student> selectByObject(Student student);
+
+List<Student> selectByQueryParam(QueryParam param);
+```
+
+mapper文件
+
+```xml
+<!--
+    一個java對象作為方法的參數，使用對象的屬性作為參數值使用
+    簡單的語法： #{屬性名}， mybatis調用此屬性的getXXX()方法獲取屬性值
+-->
+<select id="selectByObject" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where name=#{name} or age=#{age}
+</select>
+
+<select id="selectByQueryParam" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where name=#{p1} or age=#{p2}
+</select>
+```
+
+## dao接口中多個簡單類型的參數，使用位置
+
+參數位置： dao接口中方法的形參列表，從左到右，參數位置是0,1,2.....
+
+語法格式： #{arg0},#{arg1}
+
+dao接口中的方法定義
+
+```java
+/*
+    使用位置，獲取參數
+*/
+List<Student> selectByPosition(String name,Integer age);
+```
+
+mapper文件
+
+```xml
+<!--
+    mybatis版本是3.5.1
+    使用位置獲取參數值，dao接口方法是多個簡單類型的參數
+    語法： #{arg0},#{arg1}
+-->
+<select id="selectByPosition" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where name=#{arg0} or age=#{arg1}
+</select>
+```
+
+## dao接口參數是一個Map
+
+map作為dao接口的參數，使用key獲取參數值，mapper文件中，語法格式 #{key}
+
+dao接口中的方法定義
+
+```java
+/*
+    使用Map作為參數
+    */
+List<Student> selectStudentByMap(Map<String,Object> map);
+```
+
+mapper文件
+
+```xml
+<!--
+    使用Map傳遞參數
+    在mapper文件中，獲取map的值，是通過key獲取的，語法： #{key}
+-->
+<select id="selectStudentByMap" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where name=#{myname} or age=#{myage}
+</select>
+```
+
+測試，調用方法的位置
+
+```java
+@Test
+public void testSelectByMap(){
+    SqlSession sqlSession = MyBatisUtil.getSqlSession();
+    StudentDao dao = sqlSession.getMapper(StudentDao.class);
+
+    // 使用map傳遞參數
+    Map<String,Object> data = new HashMap<>();
+    data.put("myname","娜娜");
+    data.put("myage",25);
+    List<Student> students = dao.selectStudentByMap(data);
+    students.forEach(stu-> System.out.println("stu = "+stu));
+    sqlSession.close();
+}
+```
+
+# # 和 $的區別
+
+## #佔位符
+
+語法： #{字符}
+
+mybatis處理 #{} 使用jdbc對象是PrepareStatment對象
+
+```xml
+<select id="selectById" parameterType="int"
+        resultType="com.ives.domain.Student">
+    select id,name,email,age from student where id=#{studentId}
+</select>
+```
+
+```java
+//mybatis創建出PrepareStatement對象，執行sql語句
+String sql = "select id,name,email,age from student where id=?";
+PrepareStatement pst = conn.prepareStatement(sql);
+
+// 傳遞參數
+pst.setInt(1,1001);
+
+// 執行sql語句
+ResultSet rs = pst.executeQuery();
+```
+
+## #{}特點
+
+1. 使用的PrepareStatement對象，執行sql語句，效率高。
+2. 使用的PrepareStatement對象，能避免sql注入，sql語句執行更安全。
+3. #{} 常常作為列值使用的，位於等號的右側， #{} 位置的值和數據類型有關的。
+
+## $佔位符
+
+語法： ${字符}
+
+
+mybatis執行 ${} 佔位符的sql語句
+
+```xml
+<select id="selectById" parameterType="int"
+        resultType="com.ives.domain.Student">
+    select id,name,email,age from student where id=${studentId}
+</select>
+```
+
+```java
+// ${} 表示字符串連接，把sql語句的其它內容和 ${}內容使用 字符串(+) 連接的方式連在一起
+
+//mybatis創建Statement對象，執行sql語句
+String sql = "select id,name,email,age from student where id=" + "1001";
+Statement stmt = conn.createStatement(sql);
+
+// 執行sql語句
+ResultSet rs = stmt.executeQuery();
+```
+
+## ${}特點
+
+1. 使用的Statement對象，執行sql語句，效率低。
+2. ${} 占位符的值，使用字符串連接方式，有sql注入的風險，有代碼安全的問題。
+3. ${} 是原樣使用的，不會區分數據類型。
+4. ${} 常用作 表名 或者 列名，在能保證數據安全的情況下使用 ${}
+
+會有sql注入的風險
+
+![image](./images/20210630204942.png)
+
+# 封裝MyBatis輸出結果
+
+封裝輸出結果： MyBatis執行sql語句，得到ResultSet，轉為Java對象。
+
+## resultType
+
+resultType屬性： 在執行select時使用，作為```<select>```標籤的屬性出現的。
+
+resultType：表示結果類型，mysql執行sql語句，得到java對象的類型，它的值有兩種：
+
+1. java類型的全限定名稱。
+2. 使用別名
+
+```java
+Student selectById(Integer id);
+```
+
+```xml
+<select id="selectById" parameterType="int"
+        resultType="com.ives.domain.Student">
+    select id,name,email,age from student where id=#{studentId}
+</select>
+```
+
+```java
+resultType：現在使用java類型的全限定名稱，表示mybatis執行sql，把ResultSet中的數據轉為Student類型的對象。mybatis會作以下的操作：
+
+1. 調用com.ives.domain.Student的無參數構造方法，創建對象。
+    Student student = new Student(); // 使用反射創建對象
+2. 同名的列賦給同名的屬性。
+    student.setId(rs.getInt("id"));
+    student.setName(rs.getString("name"));
+3. 得到java對象，如果dao接口返回值是List集合，mybatis把student對象放入到List集合。
+
+所以執行 Student mystudent = dao.selectById(1001);
+得到 數據庫中 id=1001這行數據，這行數據的列值，賦給了mystudent對象的屬性。
+得到的mystudent對象，就相當是id=1001這行數據
+```
