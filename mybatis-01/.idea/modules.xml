@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/../mybatis-02-dao/mybatis-02-dao.iml" filepath="$PROJECT_DIR$/../mybatis-02-dao/mybatis-02-dao.iml" />
       <module fileurl="file://$PROJECT_DIR$/../mybatis-03-proxy-dao/mybatis-03-proxy-dao.iml" filepath="$PROJECT_DIR$/../mybatis-03-proxy-dao/mybatis-03-proxy-dao.iml" />
       <module fileurl="file://$PROJECT_DIR$/../mybatis-04-parameter/mybatis-04-parameter.iml" filepath="$PROJECT_DIR$/../mybatis-04-parameter/mybatis-04-parameter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../mybatis-05-result/mybatis-05-result.iml" filepath="$PROJECT_DIR$/../mybatis-05-result/mybatis-05-result.iml" />
     </modules>
   </component>
 </project>

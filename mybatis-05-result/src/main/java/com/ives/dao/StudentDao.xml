@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ives.dao.StudentDao">
+    <!--
+        resultType： 1.java類型全限定名稱 2.別名
+        resultType： 表示mybatis執行sql後得到java對象類型。
+                    規則同名列賦值給同名屬性。
+    -->
+    <select id="selectById" parameterType="int"
+            resultType="com.ives.domain.Student">
+        select id,name,email,age from student where id=#{studentId}
+    </select>
+
+    <select id="selectById2" resultType="com.ives.vo.CustomObject">
+        select id,name,email,age from student where id=#{stuid}
+    </select>
+
+    <!--
+        執行sql語句，得到是一個值(一行一列)
+    -->
+    <select id="countStudent" resultType="java.lang.Long">
+        select count(*) from student
+    </select>
+
+    <!--
+        執行sql得到一個Map結構數據，mybatis執行sql，把ResultSet轉為map
+        sql執行結果，列名作map的key，列值作map的value
+        sql執行得到一行記錄，轉為map結構是正確的
+
+        dao接口返回是一個map，sql語句最多能獲取一行記錄，多餘一行是錯誤。
+    -->
+    <select id="selectMap" resultType="java.util.HashMap">
+        select id,name,email from student where id=#{stuid}
+    </select>
+</mapper>

@@ -22,8 +22,18 @@
 
         parameterType： mybatis通過反射機制可以獲取 dao接口方法參數的類型，可以不寫
     -->
+<!--    <select id="selectById" parameterType="int"-->
+<!--            resultType="com.ives.domain.Student">-->
+<!--        select id,name,email,age from student where id=#{studentId}-->
+<!--    </select>-->
+
+<!--    <select id="selectById" parameterType="int"-->
+<!--            resultType="stu">-->
+<!--        select id,name,email,age from student where id=#{studentId}-->
+<!--    </select>-->
+
     <select id="selectById" parameterType="int"
-            resultType="com.ives.domain.Student">
+            resultType="student">
         select id,name,email,age from student where id=#{studentId}
     </select>
 

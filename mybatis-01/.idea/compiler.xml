@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="mybatis-04-parameter" />
         <module name="mybatis-02-dao" />
+        <module name="mybatis-05-result" />
         <module name="mybatis-03-proxy-dao" />
         <module name="mybatis-01-first" />
       </profile>
@@ -17,6 +18,7 @@
       <module name="mybatis-02-dao" target="1.8" />
       <module name="mybatis-03-proxy-dao" target="1.8" />
       <module name="mybatis-04-parameter" target="1.8" />
+      <module name="mybatis-05-result" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

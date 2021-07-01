@@ -985,3 +985,118 @@ resultType：現在使用java類型的全限定名稱，表示mybatis執行sql�
 得到 數據庫中 id=1001這行數據，這行數據的列值，賦給了mystudent對象的屬性。
 得到的mystudent對象，就相當是id=1001這行數據
 ```
+
+## 自定義別名
+
+mybatis提供的對java類型定義簡短，好記名稱。
+
+自定義別名的步驟：
+
+1. 在mybatis主配置文件，使用typeAliase標籤聲明別名。
+2. 在mapper文件中，resultType="別名"
+
+聲明別名(mybatis主配置文件)
+
+## 第一種語法格式
+
+```xml
+<!--聲明別名-->
+<typeAliases>
+    <!--
+        第一種語法格式
+        type： java類型的全限定名稱(自定義類型)
+        alias： 自定義別名
+
+        優點：別名可以自定義
+        缺點：每個類型必須單獨定義
+    -->
+    <typeAlias type="com.ives.domain.Student" alias="stu" />
+</typeAliases>
+```
+
+mapper文件中使用
+
+```xml
+<!-- resultType="別名" -->
+<select id="selectById" parameterType="int"
+        resultType="stu">
+    select id,name,email,age from student where id=#{studentId}
+</select>
+```
+
+## 第二種語法格式
+
+```xml
+<!--聲明別名-->
+<typeAliases>
+    <!--
+        第二種方式
+        name： 包名，mybatis會把這個包中所有類名作為別名(不用區分大小寫)
+        優點： 使用方便，一次給多個類定義別名
+        缺點： 別名不能自定義，必須是類名
+    -->
+    <package name="com.ives.domain"/>
+    <package name="com.ives.vo"/>
+</typeAliases>
+```
+
+mapper文件中使用
+
+```xml
+<select id="selectById" parameterType="int"
+        resultType="student">
+    select id,name,email,age from student where id=#{studentId}
+</select>
+```
+
+## resultType表示簡單類型
+
+dao方法
+
+```java
+long countStudent();
+```
+
+mapper文件
+
+```xml
+<!--
+    執行sql語句，得到是一個值(一行一列)
+-->
+<select id="countStudent" resultType="java.lang.Long">
+    select count(*) from student
+</select>
+```
+
+## resultType表示一個map結構
+
+dao方法
+
+```java
+// 查詢結果返回是一個Map
+Map<Object,Object> selectMap(@Param("stuid") Integer id);
+```
+
+mapper文件
+
+```xml
+<!--
+    執行sql得到一個Map結構數據，mybatis執行sql，把ResultSet轉為map
+    sql執行結果，列名作map的key，列值作map的value
+    sql執行得到一行記錄，轉為map結構是正確的
+
+    dao接口返回是一個map，sql語句最多能獲取一行記錄，多餘一行是錯誤。
+-->
+<select id="selectMap" resultType="java.util.HashMap">
+    select id,name,email from student where id=#{stuid}
+</select>
+```
+
+# 練習題
+
+輸入一個省份id，得到省份id，省份name，城市id，城市名稱
+
+例如輸入 省份id=1
+
+1 河北 1石家莊
+1 河北 2泰皇島

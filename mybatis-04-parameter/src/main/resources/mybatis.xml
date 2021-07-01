@@ -7,6 +7,27 @@
     <settings>
         <setting name="logImpl" value="STDOUT_LOGGING"/>
     </settings>
+    <!--聲明別名-->
+    <typeAliases>
+        <!--
+            第一種語法格式
+            type： java類型的全限定名稱(自定義類型)
+            alias： 自定義別名
+
+            優點：別名可以自定義
+            缺點：每個類型必須單獨定義
+        -->
+<!--        <typeAlias type="com.ives.domain.Student" alias="stu" />-->
+
+        <!--
+            第二種方式
+            name： 包名，mybatis會把這個包中所有類名作為別名(不用區分大小寫)
+            優點： 使用方便，一次給多個類定義別名
+            缺點： 別名不能自定義，必須是類名
+        -->
+        <package name="com.ives.domain"/>
+        <package name="com.ives.vo"/>
+    </typeAliases>
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
