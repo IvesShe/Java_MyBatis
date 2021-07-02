@@ -18,4 +18,14 @@ public interface StudentDao {
 
     // 查詢結果返回是一個Map
     Map<Object,Object> selectMap(@Param("stuid") Integer id);
+
+    CustomObject selectByIdUseMap(@Param("stuid") Integer id);
+
+    CustomObject selectByIdUseMap2(@Param("stuid") Integer id);
+
+    // like第一種方式
+    List<Student> selectLikeOne(@Param("name") String name);
+
+    // like第二方式
+    List<Student> selectLikeTwo(@Param("name") String name);
 }

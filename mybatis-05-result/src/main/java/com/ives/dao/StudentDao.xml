@@ -34,4 +34,43 @@
     <select id="selectMap" resultType="java.util.HashMap">
         select id,name,email from student where id=#{stuid}
     </select>
+
+    <!--
+        使用resultMap定義列和屬性的關修
+        定義resultMap
+        id：給resultMap的映射關係起個名稱，唯一值
+        type：java類型的全限定名稱
+    -->
+    <resultMap id="customMap" type="com.ives.vo.CustomObject">
+        <!--定義列名和屬性名的對應-->
+        <!--主鍵類型使用id標籤-->
+        <id column="id" property="cid" />
+        <!--非主鍵類型使用result標籤-->
+        <result column="name" property="cname" />
+        <!--列名和屬性名相同不用定義-->
+        <result column="email" property="email" />
+        <result column="age" property="age" />
+    </resultMap>
+
+    <!--使用resultMap屬性，指定映射關係的id
+        resultMap和resultType 不能同時使用，二選一。
+    -->
+    <select id="selectByIdUseMap" resultMap="customMap">
+        select id,name,email,age from student where id=#{stuid}
+    </select>
+
+    <!--使用列別名，解決列名和屬性名不同的問題-->
+    <select id="selectByIdUseMap2" resultType="com.ives.vo.CustomObject">
+        select id as cid,name as cname,email,age from student where id=#{stuid}
+    </select>
+
+    <!--like第一種方式-->
+    <select id="selectLikeOne" resultType="com.ives.domain.Student">
+        select id,name,email,age from student where name like #{name}
+    </select>
+
+    <!--like第二種方式-->
+    <select id="selectLikeTwo" resultType="com.ives.domain.Student">
+        select id,name,email,age from student where name like "%" #{name} "%"
+    </select>
 </mapper>

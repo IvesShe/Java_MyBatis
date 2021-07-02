@@ -64,4 +64,58 @@ public class MyTest {
         System.out.println("id === "+map.get("id"));
         System.out.println("email === "+map.get("email"));
     }
+
+    @Test
+    public void selectByIdUseMap(){
+        // 1.獲取SqlSession
+        SqlSession sqlSession = MyBatisUtil.getSqlSession();
+        // 2.獲取dao的代理
+        StudentDao dao = sqlSession.getMapper(StudentDao.class);
+        CustomObject co = dao.selectByIdUseMap(1006);
+        System.out.println("CustomObject = "+co);
+        // 4.關閉SqlSession對象
+        sqlSession.close();
+    }
+
+    @Test
+    public void selectByIdUseMap2(){
+        // 1.獲取SqlSession
+        SqlSession sqlSession = MyBatisUtil.getSqlSession();
+        // 2.獲取dao的代理
+        StudentDao dao = sqlSession.getMapper(StudentDao.class);
+        CustomObject co = dao.selectByIdUseMap2(1008);
+        System.out.println("CustomObject = "+co);
+        // 4.關閉SqlSession對象
+        sqlSession.close();
+    }
+
+    @Test
+    public void selectLikeOne(){
+        // 1.獲取SqlSession
+        SqlSession sqlSession = MyBatisUtil.getSqlSession();
+        // 2.獲取dao的代理
+        StudentDao dao = sqlSession.getMapper(StudentDao.class);
+
+        String name = "%娜%";
+        List<Student> students = dao.selectLikeOne(name);
+        // 4.關閉SqlSession對象
+        sqlSession.close();
+
+        students.forEach(stu-> System.out.println(stu));
+    }
+
+    @Test
+    public void selectLikeTwo(){
+        // 1.獲取SqlSession
+        SqlSession sqlSession = MyBatisUtil.getSqlSession();
+        // 2.獲取dao的代理
+        StudentDao dao = sqlSession.getMapper(StudentDao.class);
+
+        String name = "娜";
+        List<Student> students = dao.selectLikeTwo(name);
+        // 4.關閉SqlSession對象
+        sqlSession.close();
+
+        students.forEach(stu-> System.out.println(stu));
+    }
 }

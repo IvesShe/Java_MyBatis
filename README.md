@@ -1100,3 +1100,146 @@ mapper文件
 
 1 河北 1石家莊
 1 河北 2泰皇島
+
+# resultMap
+
+resultMap：結果映射。自定義列名和java對象屬性的對應關係。常用在列名和屬性名不同的情況。
+
+用法：
+
+1. 先定義resultMap標籤，指定列名和屬性名稱對應關係。
+2. 在select標籤使用resultMap屬性，指定上面定義的resultMap的id值。
+
+dao方法
+
+```java
+CustomObject selectByIdUseMap(@Param("stuid") Integer id);
+```
+
+mapper文件
+
+```xml
+<!--
+    使用resultMap定義列和屬性的關修
+    定義resultMap
+    id：給resultMap的映射關係起個名稱，唯一值
+    type：java類型的全限定名稱
+-->
+<resultMap id="customMap" type="com.ives.vo.CustomObject">
+    <!--定義列名和屬性名的對應-->
+    <!--主鍵類型使用id標籤-->
+    <id column="id" property="cid" />
+    <!--非主鍵類型使用result標籤-->
+    <result column="name" property="cname" />
+    <!--列名和屬性名相同不用定義-->
+    <result column="email" property="email" />
+    <result column="age" property="age" />
+</resultMap>
+
+<!--使用resultMap屬性，指定映射關係的id
+    resultMap和resultType 不能同時使用，二選一。
+-->
+<select id="selectByIdUseMap" resultMap="customMap">
+    select id,name,email,age from student where id=#{stuid}
+</select>
+```
+
+# 列名和java屬性名稱不一樣時的解決方式
+
+1. 使用resultMap： 自定義列名和屬性名稱對應關係
+
+2. 使用resultType： 使用列別名和java對象屬性名稱一樣
+
+## 使用resultType： 使用列別名和java對象屬性名稱一樣
+
+dao方法
+
+```java
+CustomObject selectByIdUseMap2(@Param("stuid") Integer id);
+```
+
+mapper文件
+
+```xml
+<!--使用列別名，解決列名和屬性名不同的問題-->
+<select id="selectByIdUseMap2" resultType="com.ives.vo.CustomObject">
+    select id as cid,name as cname,email,age from student where id=#{stuid}
+</select>
+```
+
+# 模糊查詢 like
+
+## 第一種方式： 在java程序中，把like的內容組裝好。把這個內容傳入到sql語句。
+
+dao方法
+
+```java
+// like第一種方式
+List<Student> selectLikeOne(@Param("name") String name);
+```
+
+mapper文件
+
+```xml
+<select id="selectLikeOne" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where name like #{name}
+</select>
+```    
+
+執行like
+
+```java
+@Test
+public void selectLikeOne(){
+    // 1.獲取SqlSession
+    SqlSession sqlSession = MyBatisUtil.getSqlSession();
+    // 2.獲取dao的代理
+    StudentDao dao = sqlSession.getMapper(StudentDao.class);
+
+    String name = "%娜%";
+    List<Student> students = dao.selectLikeOne(name);
+    // 4.關閉SqlSession對象
+    sqlSession.close();
+
+    students.forEach(stu-> System.out.println(stu));
+}
+```
+
+## 第二種方式： 在sql語句，組織like的內容。
+
+sql語句like的格式： where name like "%"空格#{name}空格"%"
+
+dao方法
+
+```java
+// like第二方式
+List<Student> selectLikeTwo(@Param("name") String name);
+```
+
+mapper文件
+
+```xml
+<!--like第二種方式-->
+<select id="selectLikeTwo" resultType="com.ives.domain.Student">
+    select id,name,email,age from student where name like "%" #{name} "%"
+</select>
+```    
+
+執行like
+
+```java
+@Test
+public void selectLikeTwo(){
+    // 1.獲取SqlSession
+    SqlSession sqlSession = MyBatisUtil.getSqlSession();
+    // 2.獲取dao的代理
+    StudentDao dao = sqlSession.getMapper(StudentDao.class);
+
+    String name = "娜";
+    List<Student> students = dao.selectLikeTwo(name);
+    // 4.關閉SqlSession對象
+    sqlSession.close();
+
+    students.forEach(stu-> System.out.println(stu));
+}
+```
